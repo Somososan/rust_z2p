@@ -10,7 +10,13 @@ async fn hello_world() -> impl Responder {
     String::from("Hello World")
 }
 
-async fn subscribe() -> HttpResponse {
+#[derive(serde::Deserialize)]
+struct FormData {
+    name: String,
+    email: String,
+}
+
+async fn subscribe(_form: web::Form<FormData>) -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
