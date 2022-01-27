@@ -17,6 +17,7 @@ tokio = {versio="1.15.0", features=["macros", "rt-multi-thread"]}
 config="0.11"
 uuid = {version="0.8.2", features=["v4"]}
 chrono = "0.4.19"
+env_logger="0.9"
 
 
 [dependencies.sqlx]
