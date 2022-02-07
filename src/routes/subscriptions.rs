@@ -4,12 +4,23 @@ use chrono::Utc;
 use sqlx::PgPool;
 use uuid::Uuid;
 
-use crate::domain::NewSubscriber;
+use crate::domain::{NewSubscriber, SubscriberEmail, SubscriberName};
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
     pub name: String,
     pub email: String,
+}
+
+impl TryFrom<FormData> for NewSubscriber {
+    type Error = String;
+
+    fn try_from(value: FormData) -> Result<Self, Self::Error> {
+        let name = SubscriberName::parse(value.name)?;
+        let email = SubscriberEmail::parse(value.email)?;
+
+        Ok(Self { name, email })
+    }
 }
 
 #[allow(clippy::async_yields_async)]
@@ -22,7 +33,7 @@ pub struct FormData {
     )
 )]
 pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
-    let subscriber = match NewSubscriber::parse(form.0) {
+    let subscriber = match NewSubscriber::try_from(form.0) {
         Ok(x) => x,
         Err(e) => {
             tracing::error!("Failed to parse formdata: {:?}", e);
