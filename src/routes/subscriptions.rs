@@ -4,12 +4,12 @@ use chrono::Utc;
 use sqlx::PgPool;
 use uuid::Uuid;
 
-use crate::domain::{NewSubscriber, SubscriberName};
+use crate::domain::NewSubscriber;
 
 #[derive(serde::Deserialize)]
 pub struct FormData {
-    name: String,
-    email: String,
+    pub name: String,
+    pub email: String,
 }
 
 #[allow(clippy::async_yields_async)]
@@ -22,9 +22,12 @@ pub struct FormData {
     )
 )]
 pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
-    let subscriber = NewSubscriber {
-        name: SubscriberName::parse(form.name.clone()),
-        email: form.email.clone(),
+    let subscriber = match NewSubscriber::parse(form.0) {
+        Ok(x) => x,
+        Err(e) => {
+            tracing::error!("Failed to parse formdata: {:?}", e);
+            return HttpResponse::BadRequest().finish();
+        }
     };
 
     match insert_subscriber(&subscriber, &pool).await {
@@ -50,7 +53,7 @@ pub async fn insert_subscriber(
         VALUES ($1, $2, $3, $4)   
         "#,
         Uuid::new_v4(),
-        subsciber.email,
+        subsciber.email.as_ref(),
         subsciber.name.as_ref(),
         Utc::now()
     )
