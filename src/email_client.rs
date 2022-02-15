@@ -106,7 +106,7 @@ mod tests {
         Mock::given(path("/email"))
             .and(method("POST"))
             .and(header("Content-Type", "application/json"))
-            .and(header_exists("X-PostMark-Authorization-Token"))
+            .and(header_exists("X-PostMark-Server-Token"))
             .respond_with(ResponseTemplate::new(200))
             .expect(1)
             .mount(&mock_server)
