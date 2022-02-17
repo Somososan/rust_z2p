@@ -1,5 +1,9 @@
 use crate::common::spawn_app;
 use claim::assert_err;
+use wiremock::{
+    matchers::{method, path},
+    Mock, ResponseTemplate,
+};
 
 #[tokio::test]
 async fn subscribe_returns_200_on_valid_form_data() {
@@ -51,4 +55,21 @@ async fn subscribe_returns_400_when_fields_are_present_but_invalid() {
         "The API did not return a 400 BAD REQUEST when the payload was: {}",
         body
     );
+}
+
+#[tokio::test]
+async fn subscribe_sends_a_confirmation_email_for_valid_form_data() {
+    let app = spawn_app().await;
+    let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
+
+    Mock::given(path("/email"))
+        .and(method("POST"))
+        .respond_with(ResponseTemplate::new(200))
+        .expect(1)
+        .mount(&app.email_server)
+        .await;
+
+    let response = app.post_subscriptions(body.into()).await;
+
+    assert_eq!(200, response.status().as_u16());
 }
