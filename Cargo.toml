@@ -16,7 +16,7 @@ serde = "1.0.134"
 serde-aux = "3"
 tokio = {version="1.15.0", features=["macros", "rt-multi-thread"]}
 config="0.11"
-uuid = {version="0.8.2", features=["v4"]}
+uuid = {version="0.8.2", features=["v4","serde"]}
 chrono = "0.4.19"
 tracing ={version="0.1",features=["log"]}
 tracing-actix-web ="0.5.0-beta.7"
@@ -27,6 +27,7 @@ secrecy={version="0.8",features=["serde"]}
 unicode-segmentation="1"
 validator="0.14"
 reqwest = {version="0.11", default-features = false, features=["rustls","json"]}
+rand = {version="0.8",features=["std_rng"]}
 
 
 [dependencies.sqlx]
@@ -53,3 +54,4 @@ quickcheck_macros = "0.9.1"
 tokio = {version="1",features=["rt","macros"]}
 wiremock = "0.5"
 serde_json = "1"
+linkify = "0.8"
