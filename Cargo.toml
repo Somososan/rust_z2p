@@ -25,7 +25,7 @@ tracing-subscriber={version="0.3", features=["registry","env-filter"]}
 tracing-bunyan-formatter="0.3"
 secrecy={version="0.8",features=["serde"]}
 unicode-segmentation="1"
-validator="0.14"
+validator={version = "0.14",features = ["derive"]}
 reqwest = {version="0.11", default-features = false, features=["rustls","json"]}
 rand = {version="0.8",features=["std_rng"]}
 

@@ -9,6 +9,8 @@ use rand::{thread_rng, Rng};
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
+use super::SUBSCRIPTION_TOKEN_LENGTH;
+
 #[derive(serde::Deserialize)]
 pub struct FormData {
     pub name: String,
@@ -142,7 +144,7 @@ fn generate_subscription_token() -> String {
     let mut rng = thread_rng();
     std::iter::repeat_with(|| rng.sample(Alphanumeric))
         .map(char::from)
-        .take(25)
+        .take(SUBSCRIPTION_TOKEN_LENGTH)
         .collect()
 }
 #[tracing::instrument(
